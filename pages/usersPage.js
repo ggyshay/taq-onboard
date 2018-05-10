@@ -33,7 +33,7 @@ export default class UsersPage extends Component{
             "window": 10
         }
 
-        Events.subscribe("userListChanged", ()=> this.getData())
+        this.subsciption = Events.subscribe("userListChanged", ()=> this.getData())
         this.getData()
 
         
@@ -60,5 +60,9 @@ export default class UsersPage extends Component{
                 />
             </View>
         )
+    }
+
+    componentWillUnmount(){
+        this.subsciption.remove()
     }
 }
