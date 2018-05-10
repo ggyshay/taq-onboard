@@ -39,22 +39,13 @@ export default class UsersPage extends Component{
         
     }
 
-    componentDidMount(){
-        console.log(">>>component userlist mounted")
-    }
-
-    componentDidUpdate(){
-        console.log(">>>component userlist updated")
-    }
-
     getData(){
-        console.log("GETTING DATA FROM USERSPAGE!!")
         let url = "https://tq-template-server-sample.herokuapp.com/users"+"?pagination="+JSON.stringify(this.options)
 
         authFetch(url, {method : "GET"})
             .then(data => {this.setState({
                 data: data.data
-            }); console.log("lista que chegou é:", data)})
+            })})
             .catch(console.log)
     }
 

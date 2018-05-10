@@ -63,7 +63,6 @@ export default class LoginPage extends Component{
     }
     
     if(this.validateEmail() && this.validatePassword()){
-      console.log("enviando dados")
       // send the user forward
       this.setState({
         serverResponse: {
@@ -84,7 +83,6 @@ export default class LoginPage extends Component{
         }),
       })    
       .then(resJson => {
-        console.log(resJson)
         this.setState({
           serverResponse: {
             data: resJson.data,
@@ -122,7 +120,6 @@ export default class LoginPage extends Component{
 
   render_server_error(){
     if(this.state.serverResponse.error){
-      console.log("lets render it!")
       return <Text style={styles.errorMessage}>{this.state.serverResponse.errorMessage}</Text>
     }
   }

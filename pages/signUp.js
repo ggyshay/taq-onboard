@@ -78,7 +78,6 @@ export default class SignUp extends Component{
     }
 
     sendData(){
-        console.log("sending data")
         if(this.validate()){
             //send data
             let url = "https://tq-template-server-sample.herokuapp.com/users";
@@ -89,7 +88,6 @@ export default class SignUp extends Component{
                 email: this.state.email
             })
 
-            console.log(bodyStr)
 
             let options= {
                 method: "POST",
@@ -104,9 +102,8 @@ export default class SignUp extends Component{
                 url = url + '/' + this.state.id.toString()
 
             }
-            console.log("post or put in ", url)
             authFetch(url, options)
-            .then(res => {console.log(res); Events.publish("userListChanged");this.props.navigation.navigate('Welcome')})
+            .then(res => {Events.publish("userListChanged");this.props.navigation.navigate('Welcome')})
             .catch(console.log)
         }
     }
@@ -122,7 +119,6 @@ export default class SignUp extends Component{
     }
 
     renderTitle(){
-        console.log("modifify:", this.state.modify)
         if(this.state.modify){
             return <Text style={title}>Edit User</Text>
         }
@@ -149,7 +145,6 @@ export default class SignUp extends Component{
 
     render(){
         ({container, title, switchLabel, center} = styles)
-        console.log(this.state)
         return(
             <View style={container}>
                 {this.renderTitle()}}

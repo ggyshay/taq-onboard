@@ -17,8 +17,6 @@ export default async function authFetch(url, options) {
 
     let response;
 
-    console.log(rawResponse.status)
-
     if ((rawResponse.status >=200 && rawResponse.status < 300) || rawResponse.status==401) {
         response = await rawResponse.json();
     } else {

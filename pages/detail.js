@@ -46,7 +46,6 @@ export default class Detail extends Component{
     
 
     render(){
-        console.log(this.id);
         ({container, primary, secondary, terciary, header, buttonContainer} = styles)
         return (
         <View style={{backgroundColor: '#dddddd', flex: 1}}>
