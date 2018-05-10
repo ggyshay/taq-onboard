@@ -7,7 +7,7 @@ class Button extends Component{
         ({buttonStyle} = styles)
         style = {...buttonStyle}
         if(!this.props.linkLike){
-            style.backgroundColor = '#0af'
+            style.backgroundColor = this.props.color || '#0af'
             
         }
 
@@ -19,7 +19,7 @@ class Button extends Component{
             fontSize: 20,
         }
         if(this.props.linkLike){
-            style.color='#0af'
+            style.color= this.props.color || '#0af'
         }
 
         return style
@@ -29,7 +29,7 @@ class Button extends Component{
         return(
             <TouchableOpacity style={this.createStyle()} onPress={this.props.onPress}>
                 <Text style={this.createTextStyle()}>
-                    {this.props.children}
+                    {this.props.title||this.props.children}
                 </Text>
             </TouchableOpacity>
         )
