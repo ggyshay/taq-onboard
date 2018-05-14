@@ -3,30 +3,46 @@ import {Text, AsyncStorage, View} from 'react-native'
 
 import authFetch from '../authorizer'
 
+import {Button} from '../components/index'
+import detailController from '../Controllers/detailController';
+
 export default class Detail extends Component{
     constructor(props){
         super(props)
 
         this.id = this.props.navigation.getParam('id', undefined)
-        const url = "https://tq-template-server-sample.herokuapp.com/users/" + this.id.toString()
         this.state={
             user :{
-                name: "        ",
-                email: "       ",
-                role: "         "
+                name: "",
+                email: "",
+                role: ""
             }
         }
 
-        authFetch(url, {
-            method: "GET"
-        })
+        this.loadData();
+    }
+
+    // async loadData(){
+    //     const url = "https://tq-template-server-sample.herokuapp.com/users/" + this.id.toString()
+
+    //     authFetch(url, {
+    //         method: "GET"
+    //     })
+    //     .then(user => {
+    //         this.setState({
+    //             user: user.data
+    //         })
+    //     })
+    //     .catch(console.log)
+    // }
+
+    async loadData(){
+        detailController.send(this.id)
         .then(user => {
             this.setState({
                 user: user.data
             })
         })
-        .catch(console.log)
-        
     }
 
     parseDate(){
@@ -37,19 +53,36 @@ export default class Detail extends Component{
         date = date[1] + ' / ' + date[2] + ' / ' + date[0]
         return date
     }
-
     
 
     render(){
-        ({container, primary, secondary, terciary, header} = styles)
+        ({container, primary, secondary, terciary, header, buttonContainer, headerFirstRow, headerSecondRow} = styles)
         return (
         <View style={{backgroundColor: '#dddddd', flex: 1}}>
             <View style = {container}>
                 <View style={header}>
-                    <Text style = {primary}>{this.state.user.name}</Text>
+                    <View style={headerFirstRow}>
+                        <Text style = {primary}>{this.state.user.name}</Text>
+
+                        <Button
+                            linkLike
+                            color='white'
+                            onPress={() => this.props.navigation.navigate("SignUp", {
+                                name: this.state.user.name,
+                                email: this.state.user.email,
+                                admin: this.state.user.role,
+                                id: this.id
+                            })}
+                        >Edit</Button> 
+                    </View>
+
+                    <View style={headerSecondRow}>
+                        <Text style = {terciary}>{this.state.user.role}</Text>
+                    </View>
                 </View>
                 
-                <Text style = {terciary}>{this.state.user.role}</Text>
+                
+                <Text style={terciary}>Email:</Text>
                 <Text style = {secondary}>{this.state.user.email}</Text>
                 <Text style={terciary}>Created:</Text>
                 <Text style={secondary}> {this.parseDate()}</Text>
@@ -81,7 +114,9 @@ const styles = {
     primary: {
         color: '#0af',
         fontSize: 30,
-        margin: 20
+        marginTop: 20, 
+        marginBottom: 20, 
+        marginLeft: 20
     },
     secondary: {
         color: '#0af',
@@ -108,6 +143,23 @@ const styles = {
         marginTop: -30,
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10,
-        marginBottom: 20
+        marginBottom: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+
+    },
+    headerFirstRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        justifyContent: 'space-between',
+    },
+    headerSecondRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        paddingLeft: 30,
+        marginTop: -15,
+        marginBottom: 18
     }
 }

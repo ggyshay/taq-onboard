@@ -3,14 +3,27 @@ import {
   Text,
   View,
   FlatList,
-  AsyncStorage
+  AsyncStorage,
+  Button
 } from 'react-native';
 
 import authFetch from '../authorizer'
+import Events from '../event'
 
 import {UserCard} from '../components/index'
+import usersController from '../Controllers/usersController';
 
 export default class UsersPage extends Component{
+    static navigationOptions = ({ navigation }) => {
+        const navigate = navigation.navigate || {};
+    
+        return {
+          headerRight: (
+            <Button onPress={()=>navigate("SignUp")} title="New" color="#0af" />
+          ),
+        };
+      };
+
     constructor(props){
         super(props)
         this.state = {
@@ -18,27 +31,54 @@ export default class UsersPage extends Component{
         }
         this.options = {
             "page": 0 , 
-            "window": 10
+            "window": 100
         }
 
-        
-        let url = "https://tq-template-server-sample.herokuapp.com/users"+"?pagination="+JSON.stringify(this.options)
+        this.subsciption = Events.subscribe("userListChanged", ()=> this.getData())
+        this.getData()
 
-        authFetch(url, {method : "GET"})
-            .then(data => this.setState({
-                data: data.data
-            }))
-            .catch((() => console.log("deve ter caido aqui")))
+        
     }
+
+    // getData(){
+    //     let url = "https://tq-template-server-sample.herokuapp.com/users"+"?pagination="+JSON.stringify(this.options)
+
+    //     authFetch(url, {method : "GET"})
+    //         .then(data => {this.setState({
+    //             data: data.data
+    //         })})
+    //         .catch(console.log)
+
+    //     usersController.send()
+    //     .then(users => {this.setState({
+    //         data: users.data
+    //     })})
+    // }
+
+    getData(){
+        usersController.send()
+        .then(users =>{
+            this.setState({
+                data: users
+            })
+        })
+    }
+
+
     render(){
         return(
-            <View style={{backgroundColor: '#dddddd' }}>
+            <View style={{backgroundColor: '#dddddd'}}>
+
                 <FlatList
                 data={this.state.data}
-                renderItem={({item}) => <UserCard name={item.name} role={item.role} onClick={()=>this.props.navigation.navigate("Detail", {id: item.id})}/>}
+                renderItem={({item}) => <UserCard name={item.name} role={item.role} onClick={()=>{this.props.navigation.navigate("Detail", {id: item.id})}}/>}
                 keyExtractor={(item, index) => item.id.toString()}
                 />
             </View>
         )
+    }
+
+    componentWillUnmount(){
+        this.subsciption.remove()
     }
 }

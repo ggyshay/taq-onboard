@@ -20,10 +20,10 @@ export default async function authFetch(url, options) {
     if ((rawResponse.status >=200 && rawResponse.status < 300) || rawResponse.status==401) {
         response = await rawResponse.json();
     } else {
-        throw new Error("server returned status " + response.status);
+        throw new Error("server returned status " + rawResponse.status);
     }
 
-    if (response.data.token) { 
+    if (rawResponse.status != 401 && response.data.token) { 
         await AsyncStorage.setItem("token", response.data.token);
     }
 
