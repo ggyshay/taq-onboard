@@ -39,7 +39,7 @@ const styles = {
         marginRight: 10,
         paddingRight: 30,
         paddingLeft: 30, 
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#fff',
         paddingTop: 30,
         paddingBottom : 30,
         borderRadius: 10,

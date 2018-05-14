@@ -4,6 +4,7 @@ import {Text, AsyncStorage, View} from 'react-native'
 import authFetch from '../authorizer'
 
 import {Button} from '../components/index'
+import detailController from '../Controllers/detailController';
 
 export default class Detail extends Component{
     constructor(props){
@@ -21,18 +22,27 @@ export default class Detail extends Component{
         this.loadData();
     }
 
-    async loadData(){
-        const url = "https://tq-template-server-sample.herokuapp.com/users/" + this.id.toString()
+    // async loadData(){
+    //     const url = "https://tq-template-server-sample.herokuapp.com/users/" + this.id.toString()
 
-        authFetch(url, {
-            method: "GET"
-        })
+    //     authFetch(url, {
+    //         method: "GET"
+    //     })
+    //     .then(user => {
+    //         this.setState({
+    //             user: user.data
+    //         })
+    //     })
+    //     .catch(console.log)
+    // }
+
+    async loadData(){
+        detailController.send(this.id)
         .then(user => {
             this.setState({
                 user: user.data
             })
         })
-        .catch(console.log)
     }
 
     parseDate(){
@@ -46,28 +56,33 @@ export default class Detail extends Component{
     
 
     render(){
-        ({container, primary, secondary, terciary, header, buttonContainer} = styles)
+        ({container, primary, secondary, terciary, header, buttonContainer, headerFirstRow, headerSecondRow} = styles)
         return (
         <View style={{backgroundColor: '#dddddd', flex: 1}}>
             <View style = {container}>
                 <View style={header}>
-                    
-                    <Text style = {primary}>{this.state.user.name}</Text>
-                    
-                    <Button
-                        linkLike
-                        color='white'
-                        onPress={() => this.props.navigation.navigate("SignUp", {
-                            name: this.state.user.name,
-                            email: this.state.user.email,
-                            admin: this.state.user.role,
-                            id: this.id
-                        })}
-                    >Edit</Button>   
+                    <View style={headerFirstRow}>
+                        <Text style = {primary}>{this.state.user.name}</Text>
 
+                        <Button
+                            linkLike
+                            color='white'
+                            onPress={() => this.props.navigation.navigate("SignUp", {
+                                name: this.state.user.name,
+                                email: this.state.user.email,
+                                admin: this.state.user.role,
+                                id: this.id
+                            })}
+                        >Edit</Button> 
+                    </View>
+
+                    <View style={headerSecondRow}>
+                        <Text style = {terciary}>{this.state.user.role}</Text>
+                    </View>
                 </View>
                 
-                <Text style = {terciary}>{this.state.user.role}</Text>
+                
+                <Text style={terciary}>Email:</Text>
                 <Text style = {secondary}>{this.state.user.email}</Text>
                 <Text style={terciary}>Created:</Text>
                 <Text style={secondary}> {this.parseDate()}</Text>
@@ -130,8 +145,21 @@ const styles = {
         borderTopLeftRadius: 10,
         marginBottom: 20,
         display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+
+    },
+    headerFirstRow: {
+        display: 'flex',
         flexDirection: 'row',
+        alignItems: 'baseline',
         justifyContent: 'space-between',
-        alignItems: 'baseline'
+    },
+    headerSecondRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        paddingLeft: 30,
+        marginTop: -15,
+        marginBottom: 18
     }
 }

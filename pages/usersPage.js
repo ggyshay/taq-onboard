@@ -11,6 +11,7 @@ import authFetch from '../authorizer'
 import Events from '../event'
 
 import {UserCard} from '../components/index'
+import usersController from '../Controllers/usersController';
 
 export default class UsersPage extends Component{
     static navigationOptions = ({ navigation }) => {
@@ -30,7 +31,7 @@ export default class UsersPage extends Component{
         }
         this.options = {
             "page": 0 , 
-            "window": 10
+            "window": 100
         }
 
         this.subsciption = Events.subscribe("userListChanged", ()=> this.getData())
@@ -39,15 +40,30 @@ export default class UsersPage extends Component{
         
     }
 
-    getData(){
-        let url = "https://tq-template-server-sample.herokuapp.com/users"+"?pagination="+JSON.stringify(this.options)
+    // getData(){
+    //     let url = "https://tq-template-server-sample.herokuapp.com/users"+"?pagination="+JSON.stringify(this.options)
 
-        authFetch(url, {method : "GET"})
-            .then(data => {this.setState({
-                data: data.data
-            })})
-            .catch(console.log)
+    //     authFetch(url, {method : "GET"})
+    //         .then(data => {this.setState({
+    //             data: data.data
+    //         })})
+    //         .catch(console.log)
+
+    //     usersController.send()
+    //     .then(users => {this.setState({
+    //         data: users.data
+    //     })})
+    // }
+
+    getData(){
+        usersController.send()
+        .then(users =>{
+            this.setState({
+                data: users
+            })
+        })
     }
+
 
     render(){
         return(

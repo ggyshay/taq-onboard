@@ -5,6 +5,7 @@ import {Input, LoadingToken, Button, LabeledSwitch} from '../components/index'
 
 import authFetch from '../authorizer'
 import Events from '../event'
+import editUserController from '../Controllers/editUserController';
 
 
 export default class SignUp extends Component{
@@ -77,32 +78,49 @@ export default class SignUp extends Component{
         return (this.validateName() && this.validateEmail() && this.validatePassword())
     }
 
+    // sendData(){
+    //     if(this.validate()){
+    //         //send data
+    //         let url = "https://tq-template-server-sample.herokuapp.com/users";
+    //         let bodyStr = JSON.stringify({
+    //             name: this.state.name,
+    //             password: this.state.pass,
+    //             role: (this.state.admin?'admin':'user'),
+    //             email: this.state.email
+    //         })
+
+
+    //         let options= {
+    //             method: "POST",
+    //             headers:{
+    //                 "Content-Type" : "application/json"
+    //             },
+    //             body: bodyStr
+    //         }
+
+    //         if(this.state.modify){
+    //             options.method =  'PUT';
+    //             url = url + '/' + this.state.id.toString()
+
+    //         }
+    //         authFetch(url, options)
+    //         .then(res => {Events.publish("userListChanged");this.props.navigation.navigate('Welcome')})
+    //         .catch(console.log)
+    //     }
+    // }
+
     sendData(){
         if(this.validate()){
-            //send data
-            let url = "https://tq-template-server-sample.herokuapp.com/users";
-            let bodyStr = JSON.stringify({
+            let user = {
                 name: this.state.name,
                 password: this.state.pass,
                 role: (this.state.admin?'admin':'user'),
-                email: this.state.email
-            })
-
-
-            let options= {
-                method: "POST",
-                headers:{
-                    "Content-Type" : "application/json"
-                },
-                body: bodyStr
+                email: this.state.email,
+                id: this.state.id,
+                isEdit: this.state.modify
             }
 
-            if(this.state.modify){
-                options.method =  'PUT';
-                url = url + '/' + this.state.id.toString()
-
-            }
-            authFetch(url, options)
+            editUserController.send(user)
             .then(res => {Events.publish("userListChanged");this.props.navigation.navigate('Welcome')})
             .catch(console.log)
         }

@@ -11,6 +11,9 @@ import {
 import {Input, Button, LoadingToken} from '../components/index'
 import authFetch from '../authorizer'
 
+import loginInteractor from '../Interactors/loginInteractor';
+import loginController from '../Controllers/loginController';
+
 export default class LoginPage extends Component{
   constructor(props){
     super(props);
@@ -52,60 +55,96 @@ export default class LoginPage extends Component{
       }
   }
 
-  validate(){
+//   validate(){
 
-    //break to speedup development
-    const { navigate } = this.props.navigation;
+//     //break to speedup development
+//     const { navigate } = this.props.navigation;
 
-    if(this.state.email == "" && this.state.pass == ""){
-      navigate('Welcome')
-      return
-    }
+//     if(this.state.email == "" && this.state.pass == ""){
+//       navigate('Welcome')
+//       return
+//     }
     
-    if(this.validateEmail() && this.validatePassword()){
-      // send the user forward
-      this.setState({
-        serverResponse: {
-          isLoading : true
-        }
-      })
+//     if(this.validateEmail() && this.validatePassword()){
+//       // send the user forward
+//       this.setState({
+//         serverResponse: {
+//           isLoading : true
+//         }
+//       })
 
-      authFetch('https://tq-template-server-sample.herokuapp.com/authenticate', {
-        method: "POST",
-        headers: {
-          Accept: 'application/json',
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: this.state.email,
-          password: this.state.pass,
-          rememberMe: false,
-        }),
-      })    
-      .then(resJson => {
-        this.setState({
-          serverResponse: {
-            data: resJson.data,
-            errorMessage: resJson.errors && resJson.errors[0].message,
-            error: (resJson.data == undefined),
-            isLoading: false,
-          }
-        })
-        return resJson.data
-      })
+//       authFetch('https://tq-template-server-sample.herokuapp.com/authenticate', {
+//         method: "POST",
+//         headers: {
+//           Accept: 'application/json',
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           email: this.state.email,
+//           password: this.state.pass,
+//           rememberMe: false,
+//         }),
+//       })    
+//       .then(resJson => {
+//         this.setState({
+//           serverResponse: {
+//             data: resJson.data,
+//             errorMessage: resJson.errors && resJson.errors[0].message,
+//             error: (resJson.data == undefined),
+//             isLoading: false,
+//           }
+//         })
+//         return resJson.data
+//       })
 
-      .then(() => { // using the data
-        let data = this.state.serverResponse.data
-        if(data){//sucess from server response
-          //saving the user name 
-          AsyncStorage.setItem("user_name", data.user.name)
-          .catch(console.error)
+//       .then(() => { // using the data
+//         let data = this.state.serverResponse.data
+//         if(data){//sucess from server response
+//           //saving the user name 
+//           AsyncStorage.setItem("user_name", data.user.name)
+//           .catch(console.error)
             
-          navigate('Welcome')
-        }
+//           navigate('Welcome')
+//         }
 
-      })
-      .catch(console.error)
+//       })
+//       .catch(console.error)
+//   }
+// }
+
+handleSumbit(){
+  if(this.validateEmail() && this.validatePassword()){
+
+    this.setState({
+      serverResponse : {
+        isLoading: true
+      }
+    })
+
+    let user = {
+      email: this.state.email,
+      password: this.state.pass,
+      rememberMe: false
+    }
+
+    loginController.send(user)
+    .then(res => this.setState({
+      serverResponse: {
+        isLoading: false,
+        error: res.error,
+        errorMessage: res.errorMessage,
+        data: res.data
+      }
+    }))
+    .then(() => {
+      let data = this.state.serverResponse.data
+      if(data){
+        AsyncStorage.setItem("user_name", data.user.name)
+        .catch(console.error)
+
+        this.props.navigation.navigate('Welcome')
+      }
+    })
   }
 }
 
@@ -115,7 +154,8 @@ export default class LoginPage extends Component{
         <LoadingToken >Loading... </LoadingToken>
       )
     }
-    return < Button onPress={()=>this.validate()}>Login</Button>
+    //return < Button onPress={()=>this.validate()}>Login</Button>
+    return < Button onPress={() => this.handleSumbit()}>Login</Button>
   }
 
   render_server_error(){
